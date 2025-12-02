@@ -33,7 +33,9 @@ const ColorCard = ({ color }) => {
 const Home = () => {
 
 	const [currentColor, setCurrentColor] = useState(getRandomColor());
-	const [ colorList, setColorList ] = useState(["#32a852"])
+	const [colorList, setColorList] = useState(["#32a852"])
+	
+	const [ newTypedColor, setNewTypedColor ] = useState("")
 
 	const [ currentDate, setCurrentDate ] = useState(new Date().toLocaleString())
 
@@ -52,7 +54,40 @@ const Home = () => {
 				<p className="lead text-secondary">
 					Generate beautiful color palettes with ease and inspiration.
 				</p>
-				<button className="btn btn-warning" onClick={() => setColorList([...colorList, getRandomColor()])}>
+
+				<input 
+					type="color" 
+					value={newTypedColor || ""} 
+					onChange={(e) => setNewTypedColor(e.target.value)} 
+					className="form-control form-control-color mx-auto" 
+					style={{ width: "6rem", height: "3rem" }}
+				/>
+				<button className="btn btn-warning" onClick={() => {
+
+					const isValidHex = (text) => /^#([0-9A-F]{3}){1,2}$/i.test(text); // regex o expresion regular
+
+					if(newTypedColor && !isValidHex(newTypedColor)) {
+						alert("Please enter a valid hex color code.");
+						return;
+					}
+
+					if(isValidHex(newTypedColor) && colorList.includes(newTypedColor)) {
+						alert("This color is already in the list.");
+						return;
+					}
+
+					if (newTypedColor != "") {
+						console.log("Adding user-typed color:", newTypedColor);
+						const colorToAdd = newTypedColor;
+						setColorList([...colorList, colorToAdd]);
+						setNewTypedColor("");
+					} else {
+						const randomColor = getRandomColor();
+						console.log("Adding random color:", randomColor);
+						setColorList( [...colorList, randomColor] ); // Spread operator
+					}
+
+				}}>
 					Add new Color!
 				</button>
 
